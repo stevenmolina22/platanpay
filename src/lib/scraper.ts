@@ -1,6 +1,6 @@
-import type { Product, Category } from "./types.js";
-import { searchProducts as searchMock } from "../mocks/products.js";
-import { searchGoogleShoppingWithFirecrawl } from "./firecrawl.js";
+import type { Product, Category } from "./types";
+import { searchProducts as searchMock } from "../mocks/products";
+import { searchGoogleShoppingWithFirecrawl } from "./firecrawl";
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 15_000;

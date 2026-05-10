@@ -1,5 +1,5 @@
-import type { Product, ScoredProduct, Store } from "./types.js";
-import { findStore } from "../mocks/stores.js";
+import type { Product, ScoredProduct, Store } from "./types";
+import { findStore } from "../mocks/stores";
 
 /**
  * Scoring 0-100. Más alto = mejor opción para el usuario.

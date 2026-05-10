@@ -1,6 +1,6 @@
 import FirecrawlApp from "@mendable/firecrawl-js";
 import { z } from "zod";
-import type { Product, Category } from "./types.js";
+import type { Product, Category } from "./types";
 
 let _app: FirecrawlApp | null = null;
 function getApp() {

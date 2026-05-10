@@ -1,4 +1,4 @@
-import type { Store } from "../lib/types.js";
+import type { Store } from "../lib/types";
 
 export const STORES: Store[] = [
   {

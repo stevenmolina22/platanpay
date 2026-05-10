@@ -1,4 +1,4 @@
-import type { Product } from "../lib/types.js";
+import type { Product } from "../lib/types";
 
 export const PRODUCTS: Product[] = [
   // Alimentos básicos

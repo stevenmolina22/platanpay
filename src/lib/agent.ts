@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
-import { TOOL_DEFS, executeTool, type ToolContext } from "./tools.js";
-import type { PurchaseReceipt, ScoredProduct } from "./types.js";
+import { TOOL_DEFS, executeTool, type ToolContext } from "./tools";
+import type { PurchaseReceipt, ScoredProduct } from "./types";
 
 const MODEL = process.env.MODEL ?? "claude-opus-4-7";
 const MAX_AGENTIC_ITERATIONS = 6;

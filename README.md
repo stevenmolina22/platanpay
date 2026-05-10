@@ -24,34 +24,33 @@ Before Submitting:
 
 Have fun! 🚀
 
-## API tests
+## Local Development
 
-Run the API in one terminal:
-
-```bash
-PORT=43129 PLATANDPAY_AGENT_MOCK=1 tsx --env-file-if-exists=.env src/api/server.ts
-```
-
-Then run the Hurl checks in another terminal:
+Install dependencies:
 
 ```bash
-API_BASE_URL=http://127.0.0.1:43129 npm run test:api
+npm install
 ```
 
-## Frontend local
-
-Run the backend:
+Run the Next.js app:
 
 ```bash
-PLATANDPAY_AGENT_MOCK=1 npm run dev:server
+npm run dev
 ```
 
-Run the webapp:
+Open `http://127.0.0.1:3000`.
+
+Mock/demo mode:
 
 ```bash
-npm run dev:frontend
+PLATANDPAY_AGENT_MOCK=1 npm run dev
 ```
 
-Open `http://127.0.0.1:5173`.
+Real agent mode requires `ANTHROPIC_API_KEY` in `.env`. `FIRECRAWL_API_KEY` is optional for broader live product search.
 
-The integrated frontend lives in `frontend/index.html` and uses `frontend/public/backend-integration.js` to call the backend.
+## Checks
+
+```bash
+npm run typecheck
+npm run build
+```

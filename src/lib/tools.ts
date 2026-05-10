@@ -1,8 +1,8 @@
 import type Anthropic from "@anthropic-ai/sdk";
-import { searchProducts, liveProductRegistry } from "./scraper.js";
-import { STORES, findStore } from "../mocks/stores.js";
-import { scoreProducts } from "./scoring.js";
-import type { PurchaseReceipt } from "./types.js";
+import { searchProducts, liveProductRegistry } from "./scraper";
+import { STORES, findStore } from "../mocks/stores";
+import { scoreProducts } from "./scoring";
+import type { PurchaseReceipt } from "./types";
 
 export const TOOL_DEFS: Anthropic.Tool[] = [
   {
@@ -134,7 +134,7 @@ export async function executeTool(
 
       // Check live registry first, then fall back to mock
       const liveProduct = liveProductRegistry.get(productId);
-      const { PRODUCTS } = await import("../mocks/products.js");
+      const { PRODUCTS } = await import("../mocks/products");
       const product =
         (liveProduct?.storeId === storeId ? liveProduct : undefined) ??
         PRODUCTS.find((p) => p.id === productId && p.storeId === storeId);

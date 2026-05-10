@@ -2,34 +2,30 @@
   "name": "platandpay",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "description": "Agente de compras supervisado para Argentina — PlatandPay",
   "scripts": {
-    "dev:server": "tsx watch --env-file-if-exists=.env src/api/server.ts",
-    "dev:frontend": "npm run dev --workspace frontend",
-    "dev": "npm run dev:server",
-    "dev:cli": "tsx --env-file-if-exists=.env src/cli/chat.ts",
-    "build": "tsc",
-    "build:frontend": "npm run build --workspace frontend",
-    "build:all": "npm run build && npm run build:frontend",
-    "start": "node dist/api/server.js",
-    "test:api": "node scripts/test-api.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
     "typecheck": "tsc --noEmit"
   },
-  "workspaces": [
-    "frontend"
-  ],
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.88.0",
+    "@anthropic-ai/sdk": "^0.95.1",
     "@mendable/firecrawl-js": "^4.22.2",
-    "express": "^4.21.0",
-    "zod": "^3.23.8"
+    "next": "16.2.6",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@orangeopensource/hurl": "^8.0.1",
-    "@types/express": "^5.0.0",
-    "@types/node": "^22.7.0",
-    "tsx": "^4.19.0",
-    "typescript": "^5.6.0"
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "tailwindcss": "^4",
+    "typescript": "^5"
   }
 }
