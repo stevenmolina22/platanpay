@@ -1,5 +1,31 @@
 {
-  "project-name": "<FILL THIS>",
-  "project-oneliner-spanish": "<FILL THIS>",
-  "project-description-spanish": "<FILL THIS>"
+  "project-name": "<Platan Pay>",
+  "project-oneliner-spanish": "<Tu agente IA personal que busca, compara y ejecuta compras online en Latinoamérica por vos, con control humano explícito y total transparencia.>",
+  "project-description-spanish": "<Platandpay es un sistema multi-agente de IA diseñado para resolver el dolor de las compras online en LatAm (principalmente Argentina y Chile).
+El problema que resuelve:
+Hoy comprar online es manual, lento y frustrante: tenés que saltar entre Mercado Libre, Facebook Marketplace, Carrefour, etc., comparar precios, envíos y reputación de vendedores, y al final muchas veces gastás de más o te perdés las mejores ofertas.
+La solución:
+Platandpay actúa como tu agente personal de compras. Le describís lo que necesitás en lenguaje natural (por chat) y el sistema:
+
+Busca en múltiples fuentes en tiempo real
+Compara y genera un Score de Recomendación (precio + envío + reputación + confianza de la fuente)
+Te presenta un listado claro y ordenado
+Nunca compra sin tu aprobación explícita (Human-in-the-Loop)
+Simula la ejecución de la compra y el seguimiento logístico
+
+Características clave del MVP:
+
+Web App Mobile First (totalmente funcional y responsive)
+Chat con Agente IA (respuestas contextuales)
+Dashboard con saldo, presupuesto y ahorro mensual en tiempo real
+Human Approval obligatorio antes de cualquier acción
+UI clara y accesible con scores visuales, colores semafóricos y progressive disclosure
+Demo self-contained (un solo archivo HTML con Tailwind + JS)
+
+Diferenciadores:
+
+Control humano total (nunca actúa sin tu OK explícito)
+Scoring de confianza de la fuente (no solo precio)
+Preparado para Fase 2: WhatsApp, pagos reales (Pomelo / Mercado Pago) y Web3 invisible (Privy + protocolos agentic)
+Enfoque en accesibilidad y transparencia>"
 }
