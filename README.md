@@ -1,8 +1,8 @@
 # team-26 Platanus Hack 26: Buenos Aires Project
 
-**Current project logo:** project-logo.png
+**Current project logo:** GitHub user-attachments image
 
-<img src="./project-logo.png" alt="Project Logo" width="200" />
+<img src="https://github.com/user-attachments/assets/2df18740-9168-4859-886f-833e3bcc9ab4" alt="Project Logo" width="200" />
 
 Track: 🤑 Agentic Money
 
