@@ -1,11 +1,10 @@
 import { runAgentTurn, type AgentMessage, type AgentTurnResult } from "@/lib/agent";
 import { PRODUCTS, searchProducts } from "@/mocks/products";
 import { scoreProducts } from "@/lib/scoring";
+import { countSessions, deleteSession, getSessionMessages, saveSessionMessages } from "@/db/sessions";
 
-const sessions = new Map<string, AgentMessage[]>();
-
-export function getHealth() {
-  return { ok: true, agent: "PlatandPay 🍌", sessions: sessions.size };
+export async function getHealth() {
+  return { ok: true, agent: "PlatandPay 🍌", sessions: await countSessions() };
 }
 
 export async function handleChat(input: unknown) {
@@ -26,12 +25,12 @@ export async function handleChat(input: unknown) {
     };
   }
 
-  const history = sessions.get(sessionId) ?? [];
+  const history = await getSessionMessages(sessionId);
   history.push({ role: "user", content: message });
 
   try {
     const result = await runConfiguredAgentTurn(history);
-    sessions.set(sessionId, history);
+    await saveSessionMessages(sessionId, history);
     return { status: 200, body: serializeAgentResult(result) };
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
@@ -42,10 +41,10 @@ export async function handleChat(input: unknown) {
     if (isHistoryCorruption) {
       console.warn(`[server] History corruption detected for session ${sessionId}, resetting and retrying...`);
       const freshHistory: AgentMessage[] = [{ role: "user", content: message }];
-      sessions.set(sessionId, freshHistory);
+      await saveSessionMessages(sessionId, freshHistory);
       try {
         const retryResult = await runConfiguredAgentTurn(freshHistory);
-        sessions.set(sessionId, freshHistory);
+        await saveSessionMessages(sessionId, freshHistory);
         return { status: 200, body: serializeAgentResult(retryResult) };
       } catch (retryErr: unknown) {
         const retryMsg = retryErr instanceof Error ? retryErr.message : String(retryErr);
@@ -57,8 +56,8 @@ export async function handleChat(input: unknown) {
   }
 }
 
-export function resetSession(id: string) {
-  sessions.delete(id);
+export async function resetSession(id: string) {
+  await deleteSession(id);
   return { ok: true, message: "Sesión reseteada." };
 }
 
