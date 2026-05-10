@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { TOOL_DEFS, executeTool, type ToolContext } from "./tools.js";
 
-const MODEL = process.env.MODEL ?? "claude-sonnet-4-6";
+const MODEL = process.env.MODEL ?? "claude-opus-4-7";
 const MAX_AGENTIC_ITERATIONS = 6;
 
 /**
@@ -121,12 +121,7 @@ export interface AgentTurnResult {
   reply: string;
   toolCalls: { name: string; input: unknown; result: unknown }[];
   stopReason: string | null;
-  usage: {
-    input: number;
-    output: number;
-    cacheRead: number;
-    cacheCreate: number;
-  };
+  usage: { input: number; output: number; cacheRead: number; cacheCreate: number };
 }
 
 let _client: Anthropic | null = null;
@@ -142,13 +137,10 @@ function getClient(): Anthropic {
  * El último elemento de `history` debe ser el mensaje user que acabamos de
  * recibir. La función arma el contexto para validar aprobaciones.
  */
-export async function runAgentTurn(
-  history: AgentMessage[],
-): Promise<AgentTurnResult> {
+export async function runAgentTurn(history: AgentMessage[]): Promise<AgentTurnResult> {
   const client = getClient();
   const lastUser = [...history].reverse().find((m) => m.role === "user");
-  const lastUserText =
-    typeof lastUser?.content === "string" ? lastUser.content : "";
+  const lastUserText = typeof lastUser?.content === "string" ? lastUser.content : "";
   const ctx: ToolContext = { lastUserMessage: lastUserText };
 
   const toolCalls: AgentTurnResult["toolCalls"] = [];
@@ -183,10 +175,7 @@ export async function runAgentTurn(
     // Empujar respuesta del asistente al historial (bloques completos)
     history.push({ role: "assistant", content: response.content });
 
-    if (
-      response.stop_reason === "end_turn" ||
-      response.stop_reason === "stop_sequence"
-    ) {
+    if (response.stop_reason === "end_turn" || response.stop_reason === "stop_sequence") {
       finalText = extractText(response.content);
       break;
     }
@@ -202,11 +191,7 @@ export async function runAgentTurn(
 
       const results: Anthropic.ToolResultBlockParam[] = [];
       for (const tu of toolUses) {
-        const result = await executeTool(
-          tu.name,
-          tu.input as Record<string, unknown>,
-          ctx,
-        );
+        const result = await executeTool(tu.name, tu.input as Record<string, unknown>, ctx);
         toolCalls.push({ name: tu.name, input: tu.input, result });
         results.push({
           type: "tool_result",
@@ -224,8 +209,7 @@ export async function runAgentTurn(
   }
 
   if (!finalText) {
-    finalText =
-      "Llegué al límite de iteraciones. ¿Querés que probemos de nuevo con otra consulta?";
+    finalText = "Llegué al límite de iteraciones. ¿Querés que probemos de nuevo con otra consulta?";
   }
 
   return {
@@ -237,10 +221,7 @@ export async function runAgentTurn(
 }
 
 function toApiMessage(m: AgentMessage): Anthropic.MessageParam {
-  return {
-    role: m.role,
-    content: m.content as Anthropic.MessageParam["content"],
-  };
+  return { role: m.role, content: m.content as Anthropic.MessageParam["content"] };
 }
 
 function extractText(content: Anthropic.ContentBlock[]): string {

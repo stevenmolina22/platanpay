@@ -1,5 +1,5 @@
 import type Anthropic from "@anthropic-ai/sdk";
-import { searchProducts } from "./scraper.js";
+import { searchProducts } from "../mocks/products.js";
 import { STORES, findStore } from "../mocks/stores.js";
 import { scoreProducts } from "./scoring.js";
 import type { PurchaseReceipt } from "./types.js";
@@ -61,6 +61,7 @@ export interface ToolContext {
 }
 
 const APPROVAL_PATTERNS = [
+  /\bsi\b/i,
   /\bsí\b/i,
   /\bdale\b/i,
   /\baprobado\b/i,
@@ -91,7 +92,7 @@ export async function executeTool(
       const query = String(input.query ?? "");
       const category = input.category as string | undefined;
       const maxResults = Math.min(8, Number(input.max_results ?? 5));
-      const found = await searchProducts(query, category);
+      const found = searchProducts(query, category);
       const scored = scoreProducts(found).slice(0, maxResults);
       return {
         ok: true,
