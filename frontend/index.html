@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -112,7 +112,8 @@
             color: #854d0e;
         }
     </style>
-    <link rel="icon" type="image/png" href="/project-logo.png">`n</head>
+    <link rel="icon" type="image/png" href="/project-logo.png">
+</head>
 <body class="bg-slate-100 text-slate-800">
     <!-- ==================== LOGIN / LANDING VIEW ==================== -->
     <div id="login-view" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
@@ -1077,30 +1078,19 @@
             }
         }
 
-        // Login
+        // Login Mock
         function login() {
-            const email = document.getElementById('login-email').value.trim();
-            const pass = document.getElementById('login-pass').value.trim();
+            // Saltamos validaciones para el mock
+            state.user.name = "Ana Belén Méndez";
+            state.user.email = "ana.mendez@email.com";
             
-            if (email && pass.length >= 4) {
-                if (email.includes('ana')) {
-                    state.user.name = "Ana Belén Méndez";
-                    state.user.email = email;
-                } else {
-                    state.user.name = email.split('@')[0].replace(/[\.\_\-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                    state.user.email = email;
-                }
-                
-                saveState();
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('app-view').classList.remove('hidden');
-                
-                updateAllUI();
-                showView('dashboard');
-                initChat();
-            } else {
-                alert('Por favor ingresá un email y una contraseña válida (demo)');
-            }
+            saveState();
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
+            
+            updateAllUI();
+            showView('dashboard');
+            initChat();
         }
 
         function quickDemoLogin() {
@@ -1128,19 +1118,10 @@
             initTailwind();
             loadState();
             
-            // Show login first time
-            const hasState = localStorage.getItem('platanpay_webapp_state');
-            
-            if (!hasState) {
-                document.getElementById('login-view').classList.remove('hidden');
-                document.getElementById('app-view').classList.add('hidden');
-            } else {
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('app-view').classList.remove('hidden');
-                updateAllUI();
-                showView('dashboard');
-                initChat();
-            }
+            // Siempre mostrar la landing al cargar (Mock behavior)
+            document.getElementById('login-view').classList.remove('hidden');
+            document.getElementById('app-view').classList.add('hidden');
+
             
             // Keyboard shortcut
             document.addEventListener('keydown', function(e) {
@@ -1179,5 +1160,6 @@
 
         window.onload = initializeApp;
     </script>
-    <script src="/backend-integration.js"></script>`n</body>
+    <script src="/backend-integration.js"></script>
+</body>
 </html>
