@@ -76,6 +76,31 @@ app.post("/chat", async (req, res) => {
     });
   } catch (err: unknown) {
     const msg = err instanceof Error ? err.message : String(err);
+    // Auto-reset si Anthropic rechaza el historial por tool_use sin tool_result
+    const isHistoryCorruption =
+      msg.includes("tool_use") && msg.includes("tool_result") && msg.includes("400") ||
+      msg.includes("invalid_request_error");
+    if (isHistoryCorruption) {
+      console.warn(`[server] History corruption detected for session ${sessionId}, resetting and retrying...`);
+      const freshHistory: AgentMessage[] = [{ role: "user", content: message }];
+      sessions.set(sessionId, freshHistory);
+      try {
+        const retryResult = await runConfiguredAgentTurn(freshHistory);
+        sessions.set(sessionId, freshHistory);
+        return res.json({
+          ok: true,
+          reply: retryResult.reply,
+          toolCalls: retryResult.toolCalls,
+          proposals: retryResult.proposals ?? [],
+          purchaseReceipts: retryResult.purchaseReceipts ?? [],
+          usage: retryResult.usage,
+          stopReason: retryResult.stopReason,
+        });
+      } catch (retryErr: unknown) {
+        const retryMsg = retryErr instanceof Error ? retryErr.message : String(retryErr);
+        return res.status(500).json({ ok: false, error: "agent_failure", message: retryMsg });
+      }
+    }
     return res.status(500).json({ ok: false, error: "agent_failure", message: msg });
   }
 });
@@ -86,11 +111,15 @@ app.post("/sessions/:id/reset", (req, res) => {
 });
 
 const port = Number(process.env.PORT ?? 3000);
-app.listen(port, () => {
-  console.log(`🍌 PlatandPay escuchando en http://localhost:${port}`);
-  console.log(`   POST /chat  { sessionId, message }`);
-  console.log(`   POST /sessions/:id/reset`);
-});
+if (!process.env.VERCEL) {
+  app.listen(port, () => {
+    console.log(`🍌 PlatandPay escuchando en http://localhost:${port}`);
+    console.log(`   POST /chat  { sessionId, message }`);
+    console.log(`   POST /sessions/:id/reset`);
+  });
+}
+
+export default app;
 
 async function runConfiguredAgentTurn(history: AgentMessage[]): Promise<AgentTurnResult> {
   if (process.env.PLATANDPAY_AGENT_MOCK !== "1") {
@@ -99,7 +128,7 @@ async function runConfiguredAgentTurn(history: AgentMessage[]): Promise<AgentTur
 
   const lastUser = [...history].reverse().find((m) => m.role === "user");
   const lastUserText = typeof lastUser?.content === "string" ? lastUser.content : "";
-  const proposals = scoreProducts(searchProducts(inferMockProductQuery(lastUserText))).slice(0, 5);
+  const proposals = scoreProducts(searchProducts(inferMockProductQuery(lastUserText))).slice(0, 10);
   const approved = /\b(si|sí|dale|aprobado|confirmo|ok)\b/i.test(lastUserText);
   const purchaseReceipts =
     approved && proposals[0]

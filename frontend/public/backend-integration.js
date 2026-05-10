@@ -20,21 +20,15 @@ function escapeHtml(value) {
   });
 }
 
-function iconForProduct(product) {
-  const tags = Array.isArray(product.tags) ? product.tags.join(" ") : "";
-  const name = `${product.name || ""} ${tags}`.toLowerCase();
-  if (name.includes("arroz")) return "🍚";
-  if (name.includes("yerba") || name.includes("mate")) return "🧉";
-  if (name.includes("detergente") || name.includes("lavandina") || name.includes("papel")) return "🧼";
-  if (name.includes("auricular") || name.includes("cargador") || name.includes("mouse") || name.includes("hdmi")) return "🎧";
-  if (name.includes("leche") || name.includes("yogur")) return "🥛";
-  if (name.includes("vino") || name.includes("coca") || name.includes("agua") || name.includes("cerveza")) return "🥤";
-  return "🛒";
-}
-
 function mapProposalToOffer(product, index) {
   const listPrice = Number(product.listPrice || product.price || 0);
   const price = Number(product.price || 0);
+  
+  let imgHtml = '<div style="background:linear-gradient(135deg,#667eea,#764ba2);width:100%;height:100%;display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:2.25rem">🛒</div>';
+  if (typeof window.iconForProduct === 'function') {
+      imgHtml = window.iconForProduct({ ...product, imageUrl: product.imageUrl });
+  }
+
   return {
     id: index,
     backendProductId: product.id,
@@ -45,7 +39,7 @@ function mapProposalToOffer(product, index) {
     price,
     discount: Number(product.discountPct || 0),
     score: Number(product.score || 0),
-    image: iconForProduct(product),
+    image: imgHtml,
     category: product.category || "otros",
     savings: Math.max(0, listPrice - price),
     description:
@@ -60,13 +54,13 @@ function appendChatBubble(role, html) {
   if (!chatBox) return;
   const div = document.createElement("div");
   if (role === "user") {
-    div.className = "flex justify-end gap-3";
-    div.innerHTML = `<div class="bg-yellow-400 px-4 py-3 rounded-3xl rounded-br-none shadow-sm max-w-[78%] font-medium">${html}</div>`;
+    div.className = "flex justify-end";
+    div.innerHTML = `<div class="chat-bubble-user">${html}</div>`;
   } else {
-    div.className = "flex gap-3";
+    div.className = "flex gap-2 items-start";
     div.innerHTML = `
-      <div class="w-8 h-8 mt-1 flex-shrink-0 rounded-2xl banana-gradient flex items-center justify-center text-xl shadow-sm">🍌</div>
-      <div class="bg-white px-4 py-3 rounded-3xl rounded-tl-none shadow-sm border border-slate-100 max-w-[82%]">${html}</div>
+      <div class="w-7 h-7 flex-shrink-0 rounded-xl banana-gradient flex items-center justify-center text-base shadow-sm mt-0.5">🍌</div>
+      <div class="chat-bubble-agent">${html}</div>
     `;
   }
   chatBox.appendChild(div);
@@ -98,6 +92,18 @@ sendChatMessage = async function sendChatMessageIntegrated() {
     '<span class="inline-flex items-center gap-x-2 text-slate-500"><i class="fas fa-spinner fa-spin"></i> Buscando y puntuando opciones...</span>',
   );
 
+  // Limpiar resultados anteriores y mostrar skeleton
+  const previewContainer = document.getElementById('preview-offers');
+  const countEl = document.getElementById('offers-result-count');
+  if (previewContainer) {
+    previewContainer.innerHTML = `
+      <div class="col-span-3 flex flex-col items-center justify-center py-16 text-slate-400 gap-3">
+        <i class="fas fa-spinner fa-spin text-3xl text-amber-400"></i>
+        <span class="text-sm font-medium">Buscando productos...</span>
+      </div>`;
+  }
+  if (countEl) countEl.textContent = 'Buscando...';
+
   try {
     const result = await callBackend(val);
     const chatBox = document.getElementById("chat-messages");
@@ -109,6 +115,16 @@ sendChatMessage = async function sendChatMessageIntegrated() {
       saveState();
       renderPreviewOffers();
       renderOffers();
+    } else {
+      // No proposals
+      if (previewContainer) {
+        previewContainer.innerHTML = `
+          <div class="col-span-3 flex flex-col items-center justify-center py-16 text-slate-400 gap-3">
+            <i class="fas fa-search text-3xl"></i>
+            <span class="text-sm font-medium">No se encontraron productos. Intentá con otra búsqueda</span>
+          </div>`;
+      }
+      if (countEl) countEl.textContent = '0 resultados encontrados';
     }
 
     const proposalHint = result.proposals?.length

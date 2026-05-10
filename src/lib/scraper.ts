@@ -1,5 +1,6 @@
 import type { Product, Category } from "./types.js";
 import { searchProducts as searchMock } from "../mocks/products.js";
+import { searchGoogleShoppingWithFirecrawl } from "./firecrawl.js";
 
 const CACHE_TTL_MS = 5 * 60 * 1000;
 const FETCH_TIMEOUT_MS = 15_000;
@@ -115,8 +116,44 @@ export async function searchProducts(query: string, category?: string): Promise<
 
   // Supplement with mock results for stores not covered by VTEX (coto, club_beneficios)
   const mockSupplements = searchMock(query, category).filter((p) => !VTEX_STORES[p.storeId]);
+  
+  // Real-time Web Search using Firecrawl for Google Shopping
+  const firecrawlResults = await searchGoogleShoppingWithFirecrawl(query);
 
-  const results = live.length > 0 ? [...live, ...mockSupplements] : searchMock(query, category);
+  let results = [
+    ...live,
+    ...firecrawlResults,
+    ...(live.length === 0 && firecrawlResults.length === 0 ? searchMock(query, category) : mockSupplements)
+  ];
+
+  // Smart Relevancy Filter: Exclude accessories if the user didn't explicitly search for them
+  const negativeKeywords = [
+    'cepillo', 'adhesivo', 'funda', 'protector', 'estuche', 'soporte', 
+    'repuesto', 'accesorio', 'limpiador', 'cable', 'cargador', 'correa', 
+    'bateria', 'batería', 'vidrio templado', 'mica', 'carcasa', 'liquido', 
+    'líquido', 'cordon', 'cordones', 'plantilla', 'pomada', 'pasta', 'bolsa',
+    'esponja', 'cera', 'renovador', 'crema', 'impermeabilizante', 'kit', 'desodorante', 'cordón'
+  ];
+  
+  const queryLower = query.toLowerCase();
+  
+  results = results.filter(p => {
+    const nameLower = p.name.toLowerCase();
+    
+    // Check if the product name contains a negative keyword
+    for (const nk of negativeKeywords) {
+      if (nameLower.includes(nk)) {
+        // If the query ITSELF doesn't contain that negative keyword, exclude it!
+        // E.g. query "zapatillas" -> exclude "cepillo lava zapatillas"
+        // E.g. query "funda iphone" -> ALLOW "funda para iphone"
+        if (!queryLower.includes(nk)) {
+          return false;
+        }
+      }
+    }
+    
+    return true;
+  });
 
   // Register live products so simulate_purchase can look them up by id
   for (const p of live) liveProductRegistry.set(p.id, p);

@@ -6,7 +6,7 @@ export type PaymentMethod =
   | "efectivo"
   | "tarjeta_coto";
 
-export type Category = "alimentos" | "limpieza" | "electronica" | "bebidas" | "otros";
+export type Category = string;
 
 export interface Store {
   id: string;
@@ -29,6 +29,7 @@ export interface Product {
   discountPct: number;
   tags: string[];
   promo?: string;
+  imageUrl?: string;
 }
 
 export interface ScoredProduct extends Product {

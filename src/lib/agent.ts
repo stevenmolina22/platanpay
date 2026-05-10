@@ -43,7 +43,7 @@ Sos **PlatandPay**, un agente especializado en compras supervisadas para Argenti
 ## Flujo de trabajo estándar
 
 1. **Escuchá** la necesidad del usuario (ej: "necesito arroz", "buscá auriculares baratos").
-2. **Buscá y puntuá** con \`search_and_score_products\`. Los resultados ya vienen con score 0-100.
+2. **SIEMPRE buscá con \`search_and_score_products\`** cada vez que el usuario mencione un producto nuevo o diferente al anterior. NUNCA reutilices resultados de búsquedas anteriores si el usuario cambió de producto. Si antes buscaste "campera" y ahora dice "zapatillas", DEBÉS llamar a la herramienta de nuevo con "zapatillas".
 3. **Presentá una propuesta estructurada** con las 3 mejores opciones (formato más abajo).
 4. **Esperá aprobación explícita.** No avances. Pedí un "sí", "dale", "aprobado" claro.
 5. **Recién ahí** llamá a \`simulate_purchase\` para simular la compra (todo es mock por ahora).
@@ -199,7 +199,7 @@ export async function runAgentTurn(history: AgentMessage[]): Promise<AgentTurnRe
         },
       ],
       tools: TOOL_DEFS,
-      messages: history.map(toApiMessage),
+      messages: sanitizeHistory(history).map(toApiMessage),
     });
 
     totalIn += response.usage.input_tokens;
@@ -239,7 +239,19 @@ export async function runAgentTurn(history: AgentMessage[]): Promise<AgentTurnRe
       continue;
     }
 
-    // max_tokens, refusal u otros: cortamos.
+    // max_tokens, refusal u otros: si hay tool_use sin resultado, agregamos dummy results.
+    const toolUses = response.content.filter(
+      (b): b is Anthropic.ToolUseBlock => b.type === "tool_use"
+    );
+    if (toolUses.length > 0) {
+      // Add dummy tool results to keep history valid
+      const dummyResults: Anthropic.ToolResultBlockParam[] = toolUses.map(tu => ({
+        type: "tool_result",
+        tool_use_id: tu.id,
+        content: JSON.stringify({ ok: false, error: "interrupted" }),
+      }));
+      history.push({ role: "user", content: dummyResults });
+    }
     finalText = extractText(response.content) || "(no hubo respuesta de texto)";
     break;
   }
@@ -258,6 +270,36 @@ export async function runAgentTurn(history: AgentMessage[]): Promise<AgentTurnRe
     stopReason,
     usage: { input: totalIn, output: totalOut, cacheRead, cacheCreate },
   };
+}
+
+function sanitizeHistory(history: AgentMessage[]): AgentMessage[] {
+  /**
+   * Removes orphaned tool_use assistant messages (those not immediately followed by
+   * a user message containing tool_result blocks). The Anthropic API rejects these
+   * with a 400 error when the conversation gets long.
+   */
+  const result: AgentMessage[] = [];
+  for (let i = 0; i < history.length; i++) {
+    const msg = history[i];
+    if (!msg) continue;
+    if (msg.role === "assistant" && Array.isArray(msg.content)) {
+      const hasToolUse = (msg.content as Anthropic.ContentBlock[]).some(b => b.type === "tool_use");
+      if (hasToolUse) {
+        const next = history[i + 1];
+        const nextHasToolResult =
+          next?.role === "user" &&
+          Array.isArray(next.content) &&
+          (next.content as Anthropic.ContentBlockParam[]).some(b => b.type === "tool_result");
+        if (!nextHasToolResult) {
+          // Skip orphaned tool_use message
+          console.warn(`[sanitizeHistory] Skipping orphaned tool_use assistant message at index ${i}`);
+          continue;
+        }
+      }
+    }
+    result.push(msg);
+  }
+  return result;
 }
 
 function toApiMessage(m: AgentMessage): Anthropic.MessageParam {
