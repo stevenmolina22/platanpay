@@ -2,7 +2,7 @@
 
 ## Resumen
 
-PlatandPay es el agente de compras del sistema **Brújula** (Paper v1.0). Sigue los tres principios fundamentales:
+PlatandPay es un agente de compras supervisado para Argentina. Está construido sobre tres principios fundamentales:
 
 1. **No invasivo** — solo trabaja con datos que el usuario comparte.
 2. **Control humano** — toda acción requiere aprobación explícita.
@@ -16,11 +16,12 @@ plantadpay/
 │   ├── lib/
 │   │   ├── agent.ts        # Orquestador + system prompt + loop agentic
 │   │   ├── tools.ts        # Definición de tools y guardia de aprobación
+│   │   ├── scraper.ts      # Scraping real vía Firecrawl (fallback a mock)
 │   │   ├── scoring.ts      # Cálculo 0-100
 │   │   └── types.ts        # Tipos compartidos
 │   ├── mocks/
 │   │   ├── stores.ts       # Carrefour, Coto, Jumbo, Mercado Libre, Club de Beneficios
-│   │   └── products.ts     # ~20 productos mockeados
+│   │   └── products.ts     # ~20 productos mockeados (fallback)
 │   ├── api/
 │   │   └── server.ts       # Express POST /chat
 │   └── cli/
@@ -60,6 +61,10 @@ La aprobación se valida en **dos lugares**:
 
 Esto es defensa en profundidad: el prompt podría fallar (jailbreak), pero el runtime no.
 
+## Scraping real con Firecrawl
+
+`scraper.ts::searchProducts()` reemplaza el mock con scraping en vivo contra Carrefour, Coto, Jumbo y Mercado Libre usando Firecrawl. Requiere `FIRECRAWL_API_KEY` en `.env`. Fallback automático a mock si la clave no está o todas las tiendas fallan. Cache de 5 minutos por query para no abusar la API.
+
 ## Sistema de scoring
 
 `scoring.ts::scoreProducts()` toma el set completo de resultados y calcula score relativo (el más barato del lote saca 40 pts en precio; los demás caen linealmente). Pesos:
@@ -81,9 +86,7 @@ El `SYSTEM_PROMPT` es estable (no contiene timestamps, IDs, ni nada volátil) y 
 
 ## Próximos pasos sugeridos
 
-- Reemplazar mocks por scraping real con Playwright MCP (carrefour.com.ar, etc.).
-- Agregar Firecrawl para extracción estructurada de productos.
 - Persistir sesiones en Redis (hoy son in-memory).
 - Streaming de respuestas (`client.messages.stream()`).
 - Tests con sesiones grabadas.
-- Integrar con los demás agentes Brújula (Presupuesto, Suscripciones, Alertas).
+- Extender el sistema con otros agentes especializados (Presupuesto, Suscripciones, Alertas).

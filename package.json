@@ -1,9 +1,9 @@
 {
-  "name": "plantadpay",
+  "name": "platandpay",
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Agente de compras supervisado para Argentina (Brújula / PlatandPay)",
+  "description": "Agente de compras supervisado para Argentina — PlatandPay",
   "scripts": {
     "dev:server": "tsx watch --env-file=.env src/api/server.ts",
     "dev:cli": "tsx --env-file=.env src/cli/chat.ts",
@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.88.0",
+    "@mendable/firecrawl-js": "^4.22.2",
     "express": "^4.21.0",
     "zod": "^3.23.8"
   },
