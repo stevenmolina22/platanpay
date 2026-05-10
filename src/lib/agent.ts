@@ -1,5 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { TOOL_DEFS, executeTool, type ToolContext } from "./tools.js";
+import type { PurchaseReceipt, ScoredProduct } from "./types.js";
 
 const MODEL = process.env.MODEL ?? "claude-opus-4-7";
 const MAX_AGENTIC_ITERATIONS = 6;
@@ -120,6 +121,8 @@ export interface AgentMessage {
 export interface AgentTurnResult {
   reply: string;
   toolCalls: { name: string; input: unknown; result: unknown }[];
+  proposals?: ScoredProduct[];
+  purchaseReceipts?: PurchaseReceipt[];
   stopReason: string | null;
   usage: { input: number; output: number; cacheRead: number; cacheCreate: number };
 }
@@ -212,9 +215,13 @@ export async function runAgentTurn(history: AgentMessage[]): Promise<AgentTurnRe
     finalText = "Llegué al límite de iteraciones. ¿Querés que probemos de nuevo con otra consulta?";
   }
 
+  const structured = extractStructuredToolData(toolCalls);
+
   return {
     reply: finalText,
     toolCalls,
+    proposals: structured.proposals,
+    purchaseReceipts: structured.purchaseReceipts,
     stopReason,
     usage: { input: totalIn, output: totalOut, cacheRead, cacheCreate },
   };
@@ -229,4 +236,45 @@ function extractText(content: Anthropic.ContentBlock[]): string {
     .filter((b): b is Anthropic.TextBlock => b.type === "text")
     .map((b) => b.text)
     .join("\n");
+}
+
+function extractStructuredToolData(toolCalls: AgentTurnResult["toolCalls"]): {
+  proposals: ScoredProduct[];
+  purchaseReceipts: PurchaseReceipt[];
+} {
+  const proposals = new Map<string, ScoredProduct>();
+  const purchaseReceipts: PurchaseReceipt[] = [];
+
+  for (const call of toolCalls) {
+    if (call.name === "search_and_score_products" && isSearchResult(call.result)) {
+      for (const product of call.result.results) {
+        proposals.set(`${product.storeId}:${product.id}`, product);
+      }
+    }
+
+    if (call.name === "simulate_purchase" && isPurchaseReceipt(call.result)) {
+      purchaseReceipts.push(call.result);
+    }
+  }
+
+  return {
+    proposals: [...proposals.values()],
+    purchaseReceipts,
+  };
+}
+
+function isSearchResult(value: unknown): value is { results: ScoredProduct[] } {
+  if (!value || typeof value !== "object" || !("results" in value)) return false;
+  const results = (value as { results: unknown }).results;
+  return Array.isArray(results);
+}
+
+function isPurchaseReceipt(value: unknown): value is PurchaseReceipt {
+  return Boolean(
+    value &&
+      typeof value === "object" &&
+      (value as { ok?: unknown }).ok === true &&
+      (value as { mock?: unknown }).mock === true &&
+      typeof (value as { receiptId?: unknown }).receiptId === "string",
+  );
 }

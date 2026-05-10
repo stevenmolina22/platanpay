@@ -1,0 +1,1183 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlatanPay • WebApp - Tu agente IA de compras y ahorros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+        }
+        
+        .logo-font {
+            font-family: 'Poppins', system_ui, sans-serif;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+        }
+
+        .nav-link {
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            position: relative;
+        }
+        
+        .nav-link.active {
+            color: #FACC15;
+            font-weight: 600;
+        }
+        
+        .nav-link.active:after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(to right, #FACC15, #FDE047);
+            border-radius: 2px;
+        }
+
+        .modern-card {
+            transition: transform 0.2s cubic-bezier(0.4, 0.0, 0.2, 1), 
+                       box-shadow 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+        
+        .modern-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        .offer-card {
+            transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .offer-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .section-view {
+            display: none;
+        }
+        
+        .section-view.active {
+            display: block;
+        }
+
+        .price-old {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+
+        .platanpay-btn {
+            transition: all 0.2s cubic-bezier(0.4, 0.0, 0.2, 1);
+            font-weight: 700;
+        }
+
+        .platanpay-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+
+        .success-check {
+            animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .banana-float {
+            animation: bananaFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes bananaFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(3deg); }
+        }
+
+        .app-container {
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .metric-value {
+            font-variant-numeric: tabular-nums;
+        }
+
+        .mock-label {
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 9999px;
+            background: #f1e7d2;
+            color: #854d0e;
+        }
+    </style>
+    <link rel="icon" type="image/png" href="/project-logo.png">`n</head>
+<body class="bg-slate-100 text-slate-800">
+    <!-- ==================== LOGIN / LANDING VIEW ==================== -->
+    <div id="login-view" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+        <div class="max-w-5xl w-full">
+            <!-- Hero + Login -->
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Hero Side -->
+                <div class="text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start gap-x-4 mb-6">
+                        <div class="w-16 h-16 rounded-3xl banana-gradient flex items-center justify-center shadow-2xl banana-float">
+                            <span class="text-6xl">🍌</span>
+                        </div>
+                        <div>
+                            <span class="logo-font text-6xl font-extrabold tracking-tighter text-white">PlatanPay</span>
+                        </div>
+                    </div>
+                    
+                    <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter text-white leading-none mb-4">
+                        Tu agente IA<br>que encuentra<br>las mejores ofertas<br>y paga por vos
+                    </h1>
+                    
+                    <p class="text-xl text-slate-300 max-w-md mx-auto md:mx-0 mb-8">
+                        Ahorra tiempo y dinero. La IA busca, compara y paga por ti en Carrefour, Mercado Libre, Club Bepo y más.
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-3 justify-center md:justify-start">
+                        <div class="inline-flex items-center gap-x-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl text-sm text-white">
+                            <i class="fas fa-check-circle text-emerald-400"></i>
+                            <span>Sin tarjeta • 30 días gratis</span>
+                        </div>
+                        <div class="inline-flex items-center gap-x-2 bg-white/10 backdrop-blur-md px-4 py-2 rounded-2xl text-sm text-white">
+                            <i class="fas fa-check-circle text-emerald-400"></i>
+                            <span>Integrado con Mercado Pago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Card -->
+                <div class="bg-white rounded-3xl shadow-2xl p-8 md:p-10 w-full max-w-md mx-auto">
+                    <div class="text-center mb-8">
+                        <div class="mx-auto w-14 h-14 rounded-2xl banana-gradient flex items-center justify-center mb-4">
+                            <span class="text-4xl">🍌</span>
+                        </div>
+                        <h2 class="text-3xl font-extrabold tracking-tight">Bienvenido de nuevo</h2>
+                        <p class="text-slate-500 mt-1">Inicia sesión para ver tus ahorros</p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-1.5">Email</label>
+                            <input id="login-email" type="email" value="ana.mendez@email.com" 
+                                   class="w-full px-4 py-3.5 border border-slate-200 focus:border-yellow-400 rounded-2xl text-sm outline-none transition-all">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-600 mb-1.5">Contraseña</label>
+                            <input id="login-pass" type="password" value="demo123" 
+                                   class="w-full px-4 py-3.5 border border-slate-200 focus:border-yellow-400 rounded-2xl text-sm outline-none transition-all">
+                        </div>
+                        
+                        <button onclick="login()" 
+                                class="w-full platanpay-btn py-4 bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-black font-extrabold rounded-2xl text-lg shadow-lg flex items-center justify-center gap-x-3 mt-2">
+                            <span>Entrar a PlatanPay</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                        
+                        <button onclick="quickDemoLogin()" 
+                                class="w-full py-3 text-sm font-semibold text-slate-600 hover:text-slate-800 flex items-center justify-center gap-x-2 transition-colors">
+                            <i class="fas fa-rocket"></i>
+                            <span>Entrar directamente en modo Demo</span>
+                        </button>
+                    </div>
+                    
+                    <div class="mt-6 text-center">
+                        <p class="text-xs text-slate-400">¿Nuevo en PlatanPay? <span class="font-semibold text-yellow-600 cursor-pointer hover:underline">Crear cuenta gratis</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== APP VIEW ==================== -->
+    <div id="app-view" class="hidden min-h-screen bg-slate-100">
+        <!-- Top Navigation Bar -->
+        <nav class="sticky top-0 z-50 bg-white border-b border-slate-200 shadow-sm">
+            <div class="max-w-screen-2xl mx-auto">
+                <div class="px-8 py-4 flex items-center justify-between">
+                    <!-- Logo -->
+                    <div class="flex items-center gap-x-3 cursor-pointer" onclick="showView('dashboard')">
+                        <div class="w-10 h-10 rounded-2xl banana-gradient flex items-center justify-center shadow-inner">
+                            <span class="text-3xl">🍌</span>
+                        </div>
+                        <div>
+                            <span class="logo-font text-3xl font-extrabold tracking-tighter text-slate-900">PlatanPay</span>
+                            <span class="ml-1.5 text-[10px] px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded-full font-bold align-super">WEB</span>
+                        </div>
+                    </div>
+
+                    <!-- Desktop Navigation -->
+                    <div class="hidden md:flex items-center gap-x-2 text-sm font-medium">
+                        <button onclick="showView('dashboard')" id="nav-dashboard"
+                                class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100 flex items-center gap-x-2 text-slate-700 active">
+                            <i class="fas fa-home w-4"></i>
+                            <span>Dashboard</span>
+                        </button>
+                        <button onclick="showView('ofertas')" id="nav-ofertas"
+                                class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100 flex items-center gap-x-2 text-slate-700">
+                            <i class="fas fa-tags w-4"></i>
+                            <span>Ofertas</span>
+                        </button>
+                        <button onclick="showView('historial')" id="nav-historial"
+                                class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100 flex items-center gap-x-2 text-slate-700">
+                            <i class="fas fa-history w-4"></i>
+                            <span>Historial</span>
+                        </button>
+                        <button onclick="showView('chat')" id="nav-chat"
+                                class="nav-link px-5 py-2 rounded-2xl hover:bg-slate-100 flex items-center gap-x-2 text-slate-700">
+                            <i class="fas fa-robot w-4"></i>
+                            <span>Agente IA</span>
+                        </button>
+                    </div>
+
+                    <!-- Right side: User + Actions -->
+                    <div class="flex items-center gap-x-4">
+                        <!-- Quick action -->
+                        <button onclick="showView('ofertas')" 
+                                class="hidden md:flex items-center gap-x-2 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-black text-sm font-extrabold rounded-2xl transition-all active:scale-[0.985]">
+                            <i class="fas fa-magic"></i>
+                            <span>Ver ofertas del día</span>
+                        </button>
+
+                        <!-- User Profile -->
+                        <div class="flex items-center gap-x-3 cursor-pointer" onclick="showView('perfil')">
+                            <div class="text-right hidden md:block">
+                                <div id="nav-user-name" class="font-semibold text-sm">Ana Belén Méndez</div>
+                                <div class="text-emerald-600 text-xs font-medium">Nivel Oro • $3.847</div>
+                            </div>
+                            <div class="w-10 h-10 rounded-2xl overflow-hidden border-2 border-yellow-300 shadow-sm ring-2 ring-yellow-100">
+                                <img id="nav-user-avatar" src="https://i.pravatar.cc/40?img=28" alt="Ana" class="w-full h-full object-cover">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content Container -->
+        <div class="max-w-screen-2xl mx-auto px-6 md:px-10 py-8">
+            
+            <!-- DASHBOARD VIEW -->
+            <div id="view-dashboard" class="section-view active">
+                <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-y-4 mb-8">
+                    <div>
+                        <div class="flex items-center gap-x-3">
+                            <span id="greeting" class="text-4xl font-extrabold tracking-tight">¡Buenos días, Ana!</span>
+                            <span class="text-4xl">👋</span>
+                        </div>
+                        <p class="text-xl text-slate-600 mt-1">Aquí tienes un resumen de tus finanzas y ahorros de hoy</p>
+                    </div>
+                    
+                    <div class="flex items-center gap-x-3">
+                        <div class="px-4 py-2 bg-white rounded-2xl border border-slate-200 text-sm flex items-center gap-x-2 shadow-sm">
+                            <i class="fas fa-sync-alt text-emerald-500"></i>
+                            <span class="font-medium">Datos actualizados hace 2 min</span>
+                            <span class="mock-label">DEMO</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Metrics -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <!-- Saldo -->
+                    <div class="modern-card bg-white rounded-3xl p-7 border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="text-sm font-semibold tracking-widest text-slate-500">SALDO PLATANPAY</div>
+                                <div class="flex items-baseline gap-x-1 mt-2">
+                                    <span id="saldo-value" class="text-5xl font-extrabold tracking-tighter">$3.847</span>
+                                    <span class="text-2xl font-semibold text-emerald-600">,50</span>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-wallet text-3xl text-emerald-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-emerald-600 text-sm font-bold">
+                            <i class="fas fa-arrow-trend-up mr-2"></i>
+                            <span id="saldo-change">+12% este mes</span>
+                        </div>
+                    </div>
+
+                    <!-- Presupuesto -->
+                    <div class="modern-card bg-white rounded-3xl p-7 border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="text-sm font-semibold tracking-widest text-slate-500">PRESUPUESTO RESTANTE</div>
+                                <div class="flex items-baseline gap-x-2 mt-2">
+                                    <span id="presupuesto-value" class="text-5xl font-extrabold tracking-tighter">$420</span>
+                                    <span class="text-xl text-slate-400 font-medium">/ $500</span>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 bg-yellow-100 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-chart-pie text-3xl text-yellow-600"></i>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <div class="flex justify-between text-xs mb-1.5 font-medium">
+                                <span class="text-slate-500">Usado</span>
+                                <span id="presupuesto-pct" class="font-extrabold text-yellow-600">84%</span>
+                            </div>
+                            <div class="h-3 bg-slate-100 rounded-full overflow-hidden">
+                                <div id="presupuesto-bar" class="h-full bg-gradient-to-r from-yellow-400 to-yellow-500 rounded-full transition-all" style="width: 84%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ahorro -->
+                    <div class="modern-card bg-white rounded-3xl p-7 border border-slate-100 shadow-sm">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <div class="text-sm font-semibold tracking-widest text-slate-500">AHORRO ESTE MES</div>
+                                <div class="flex items-baseline gap-x-1 mt-2">
+                                    <span id="ahorro-value" class="text-5xl font-extrabold tracking-tighter text-emerald-600">$180</span>
+                                </div>
+                            </div>
+                            <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                                <i class="fas fa-piggy-bank text-3xl text-emerald-600"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-center text-emerald-600 text-sm font-bold">
+                            <i class="fas fa-arrow-trend-up mr-2"></i>
+                            <span id="ahorro-change">+36% vs mes pasado</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Proposals Preview -->
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <span class="font-extrabold text-2xl tracking-tight">Propuestas del Agente IA</span>
+                            <span class="ml-3 text-xs px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full font-bold">4 nuevas</span>
+                        </div>
+                        <button onclick="showView('ofertas')" 
+                                class="text-sm font-extrabold flex items-center gap-x-2 text-yellow-600 hover:text-yellow-700 transition-colors">
+                            VER TODAS <i class="fas fa-arrow-right ml-1"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="preview-offers">
+                        <!-- Populated dynamically by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- OFERTAS VIEW -->
+            <div id="view-ofertas" class="section-view">
+                <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-y-4 mb-6">
+                    <div>
+                        <span class="font-extrabold text-3xl tracking-tight">Propuesta del Agente para hoy</span>
+                        <div class="flex items-center gap-x-2 mt-1">
+                            <span class="text-emerald-600 font-medium">4 ofertas exclusivas</span>
+                            <span class="mock-label">SIMULADO</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-x-3">
+                        <button onclick="selectAllOffers()" 
+                                class="px-5 py-2.5 text-sm font-semibold border border-slate-300 hover:bg-slate-50 rounded-2xl flex items-center gap-x-2 transition-all">
+                            <i class="fas fa-check-double"></i>
+                            <span>Seleccionar todas</span>
+                        </button>
+                        <button onclick="reviewSelectedOffers()" id="review-btn"
+                                class="hidden px-6 py-2.5 bg-yellow-400 hover:bg-yellow-500 active:bg-yellow-600 text-black font-extrabold rounded-2xl flex items-center gap-x-2 shadow transition-all">
+                            <span>Revisar y Aprobar <span id="selected-count">0</span></span>
+                            <i class="fas fa-check-double"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="offers-list">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- HISTORIAL VIEW -->
+            <div id="view-historial" class="section-view">
+                <div class="flex items-end justify-between mb-6">
+                    <div>
+                        <span class="font-extrabold text-3xl tracking-tight">Historial de Ahorros</span>
+                        <p class="text-slate-600">Tus compras inteligentes y el dinero que has ahorrado</p>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-xs text-slate-500">TOTAL AHORRADO</div>
+                        <div id="historial-total" class="font-mono text-4xl font-extrabold text-emerald-600">$1.248</div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="history-list">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+
+            <!-- CHAT / AGENTE IA VIEW -->
+            <div id="view-chat" class="section-view">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex items-center gap-x-4 mb-6">
+                        <div class="w-14 h-14 rounded-3xl banana-gradient flex-shrink-0 flex items-center justify-center shadow-inner">
+                            <span class="text-5xl">🍌</span>
+                        </div>
+                        <div>
+                            <div class="font-extrabold text-3xl tracking-tight">Agente Platan</div>
+                            <div class="flex items-center gap-x-2 text-emerald-600">
+                                <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-pulse"></div>
+                                <span class="font-semibold">En línea • Responde en segundos</span>
+                                <span class="mock-label ml-2">IA SIMULADA</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+                        <!-- Chat messages -->
+                        <div id="chat-messages" class="h-[420px] p-6 overflow-y-auto space-y-5 bg-slate-50 text-sm">
+                            <!-- Populated by JS on init -->
+                        </div>
+                        
+                        <!-- Input -->
+                        <div class="p-4 border-t bg-white flex gap-3">
+                            <input id="chat-input" type="text" placeholder="Pregúntale al agente... (ej: ¿qué ofertas de café tienes hoy?)" 
+                                   class="flex-1 bg-slate-100 border border-slate-200 focus:border-yellow-400 rounded-2xl px-5 py-3.5 text-sm outline-none"
+                                   onkeypress="if (event.key === 'Enter') sendChatMessage()">
+                            <button onclick="sendChatMessage()" 
+                                    class="px-7 bg-yellow-400 hover:bg-yellow-500 transition-colors text-black font-extrabold rounded-2xl flex items-center gap-x-2 shadow-sm">
+                                <span>Enviar</span>
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center text-xs text-slate-400 mt-3">Este es un chat simulado. En producción estaría conectado a un modelo de IA real.</div>
+                </div>
+            </div>
+
+            <!-- PERFIL VIEW -->
+            <div id="view-perfil" class="section-view">
+                <div class="max-w-2xl mx-auto">
+                    <div class="text-center mb-8">
+                        <div class="mx-auto w-24 h-24 rounded-full overflow-hidden border-4 border-yellow-300 shadow-xl mb-4 ring-8 ring-yellow-100">
+                            <img id="profile-avatar" src="https://i.pravatar.cc/96?img=28" class="w-full h-full object-cover">
+                        </div>
+                        <div id="profile-name" class="font-extrabold text-3xl">Ana Belén Méndez</div>
+                        <div class="text-emerald-600 font-semibold">Nivel Oro • Miembro desde Marzo 2025</div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="modern-card bg-white rounded-3xl px-6 py-5 border border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center gap-x-4">
+                                <i class="fas fa-wallet text-2xl text-yellow-500 w-7"></i>
+                                <div>
+                                    <div class="font-semibold">Saldo actual</div>
+                                    <div id="profile-saldo" class="font-mono text-2xl font-extrabold">$3.847,50</div>
+                                </div>
+                            </div>
+                            <button class="px-5 py-2 text-sm font-bold border border-yellow-400 text-yellow-600 rounded-2xl hover:bg-yellow-50 transition-colors">Recargar</button>
+                        </div>
+                        
+                        <div class="modern-card bg-white rounded-3xl px-6 py-5 border border-slate-100 flex items-center justify-between">
+                            <div class="flex items-center gap-x-4">
+                                <i class="fas fa-shield-halved text-2xl text-emerald-500 w-7"></i>
+                                <div>
+                                    <div class="font-semibold">Reglas de seguridad</div>
+                                    <div class="text-sm text-emerald-600 font-medium">5/5 activas • Protección total</div>
+                                </div>
+                            </div>
+                            <button class="px-5 py-2 text-sm font-bold border border-emerald-400 text-emerald-600 rounded-2xl hover:bg-emerald-50 transition-colors">Gestionar</button>
+                        </div>
+                        
+                        <div onclick="simulateLogout()" class="cursor-pointer modern-card bg-white hover:bg-red-50 transition-colors rounded-3xl px-6 py-5 border border-slate-100 flex items-center justify-between text-red-600">
+                            <div class="flex items-center gap-x-4">
+                                <i class="fas fa-sign-out-alt text-2xl w-7"></i>
+                                <div class="font-semibold">Cerrar sesión</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-10 text-xs text-slate-400">
+                        Versión WebApp Demo v1.6 • Datos simulados • 
+                        <span class="font-mono">PlatanPay © 2026</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Oferta Detalle Modal -->
+    <div id="detalle-modal" onclick="if (event.target.id === 'detalle-modal') hideDetalleModal()" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-[70] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-7">
+                <div class="flex justify-between items-start mb-5">
+                    <div class="font-extrabold text-2xl">Detalle de la oferta</div>
+                    <button onclick="hideDetalleModal()" class="text-slate-400 hover:text-slate-600 w-9 h-9 flex items-center justify-center -mr-2"><i class="fas fa-times text-2xl"></i></button>
+                </div>
+                
+                <div id="detalle-content" class="space-y-5 text-sm">
+                    <!-- JS populated -->
+                </div>
+            </div>
+            
+            <div class="border-t p-5 flex gap-3 bg-slate-50">
+                <button onclick="hideDetalleModal()" class="flex-1 py-3.5 rounded-2xl border border-slate-300 font-semibold text-sm hover:bg-white transition-colors">Cerrar</button>
+                <button onclick="addCurrentOfferToSelection()" id="detalle-add-btn" 
+                        class="flex-1 platanpay-btn py-3.5 bg-yellow-400 hover:bg-yellow-500 text-black font-extrabold rounded-2xl text-sm">Añadir a mi propuesta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Review & Approve Modal -->
+    <div id="approval-modal" onclick="if (event.target.id === 'approval-modal') hideApprovalModal()" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-[70] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" class="bg-white w-full max-w-lg rounded-3xl shadow-2xl">
+            <div class="p-7">
+                <div class="flex justify-between mb-5">
+                    <div>
+                        <div class="font-extrabold text-2xl">Revisar propuesta</div>
+                        <div class="text-sm text-slate-500">Confirmá antes de pagar con Mercado Pago</div>
+                    </div>
+                    <button onclick="hideApprovalModal()" class="text-slate-400 hover:text-slate-600"><i class="fas fa-times text-2xl"></i></button>
+                </div>
+
+                <div id="modal-offers-list" class="max-h-[220px] overflow-auto space-y-3 pr-2 mb-5 text-sm">
+                    <!-- JS populated -->
+                </div>
+
+                <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-5 mb-6">
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="text-emerald-700">Total a pagar hoy</span>
+                        <span id="modal-total" class="font-extrabold text-lg font-mono"></span>
+                    </div>
+                    <div class="flex justify-between items-baseline">
+                        <span class="font-semibold text-emerald-700">Ahorro total con esta propuesta</span>
+                        <span id="modal-savings" class="font-extrabold text-3xl tracking-tighter text-emerald-600"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-5 border-t flex gap-3 bg-white rounded-b-3xl">
+                <button onclick="hideApprovalModal()" class="flex-1 py-3.5 rounded-2xl border border-slate-300 font-semibold text-sm">Cancelar</button>
+                <button onclick="confirmPurchase()" class="flex-1 platanpay-btn py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold rounded-2xl flex items-center justify-center gap-x-2 text-sm">
+                    <span>Confirmar y pagar con Mercado Pago</span>
+                    <i class="fas fa-lock"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="success-modal" onclick="hideSuccessModal()" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-[80] p-6">
+        <div onclick="event.stopImmediatePropagation()" class="max-w-md w-full bg-white rounded-3xl p-9 text-center shadow-2xl">
+            <div class="mx-auto w-20 h-20 flex items-center justify-center rounded-full bg-emerald-100 mb-5 success-check">
+                <i class="fas fa-check text-emerald-500 text-6xl"></i>
+            </div>
+            
+            <div class="font-extrabold text-4xl tracking-tight mb-2">¡Compra aprobada!</div>
+            <div class="text-emerald-600 font-semibold text-lg mb-6">Pagaste con Mercado Pago • Ahorraste <span id="success-savings" class="font-extrabold"></span></div>
+            
+            <div class="bg-emerald-50 border border-emerald-100 rounded-2xl p-4 text-sm text-emerald-700 text-left mb-6">
+                Recibirás confirmación por email y WhatsApp.<br>
+                Tus productos llegarán en 24-48 horas.
+            </div>
+
+            <button onclick="hideSuccessModal()" class="w-full bg-yellow-400 hover:bg-yellow-500 py-4 rounded-2xl text-sm font-extrabold text-black active:scale-[0.985]">Volver al Dashboard</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== TAILWIND + STATE ====================
+        function initTailwind() {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            'logo': ['Poppins', 'system-ui', 'sans-serif']
+                        }
+                    }
+                }
+            };
+        }
+
+        let state = {
+            user: {
+                name: "Ana Belén Méndez",
+                email: "ana.mendez@email.com",
+                avatar: "https://i.pravatar.cc/80?img=28",
+                memberSince: "Marzo 2025"
+            },
+            saldo: 3847.50,
+            presupuestoTotal: 500,
+            presupuestoRestante: 420,
+            ahorroMes: 180,
+            historial: [],
+            selectedOffers: [],
+            offers: [
+                { id: 0, store: "Club Bepo", product: "Jabón Líquido Lavanda 500ml", originalPrice: 100, price: 16, discount: 84, image: "🧴", category: "Higiene", savings: 84, description: "Jabón líquido con aroma a lavanda natural. Ideal para piel sensible y uso diario. Oferta exclusiva para miembros PlatanPay." },
+                { id: 1, store: "Carrefour", product: "Pasia Chocolate 150g", originalPrice: 30, price: 20, discount: 33, image: "🍫", category: "Alimentos", savings: 10, description: "Deliciosa tableta de chocolate con leche de alta calidad. Precio especial solo para usuarios de PlatanPay." },
+                { id: 2, store: "Coffee del Día", product: "Café del Día 250g", originalPrice: 18, price: 10, discount: 44, image: "☕", category: "Bebidas", savings: 8, description: "Café molido 100% arábigo de origen colombiano. Perfecto para empezar el día con energía." },
+                { id: 3, store: "Carrefour", product: "Aceite de Girasol 1L", originalPrice: 30, price: 16, discount: 47, image: "🫒", category: "Alimentos", savings: 14, description: "Aceite de girasol refinado, rico en vitamina E. Ideal para cocinar y freír. Pack familiar." }
+            ]
+        };
+
+        function loadState() {
+            const saved = localStorage.getItem('platanpay_webapp_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state = { ...state, ...parsed };
+            } else {
+                state.historial = [
+                    { id: 1, date: "28 Ene", store: "Carrefour", product: "Aceite + Jabón", saved: 124, total: 8730 },
+                    { id: 2, date: "22 Ene", store: "Mercado Libre", product: "Zapatillas Nike", saved: 89, total: 14200 },
+                    { id: 3, date: "15 Ene", store: "Club Bepo", product: "Pack yerba + mate", saved: 67, total: 3745 },
+                    { id: 4, date: "8 Ene", store: "Carrefour", product: "2x1 frutas", saved: 42, total: 2890 }
+                ];
+                saveState();
+            }
+        }
+
+        function saveState() {
+            localStorage.setItem('platanpay_webapp_state', JSON.stringify(state));
+        }
+
+        function updateAllUI() {
+            // Update dashboard metrics
+            const saldoEl = document.getElementById('saldo-value');
+            if (saldoEl) saldoEl.textContent = state.saldo.toLocaleString('es-AR');
+            
+            const presEl = document.getElementById('presupuesto-value');
+            if (presEl) presEl.textContent = '$' + state.presupuestoRestante;
+            
+            const ahorroEl = document.getElementById('ahorro-value');
+            if (ahorroEl) ahorroEl.textContent = '$' + state.ahorroMes;
+            
+            const pct = Math.round((state.presupuestoRestante / state.presupuestoTotal) * 100);
+            const pctEl = document.getElementById('presupuesto-pct');
+            if (pctEl) pctEl.textContent = pct + '%';
+            
+            const barEl = document.getElementById('presupuesto-bar');
+            if (barEl) barEl.style.width = pct + '%';
+            
+            // Update nav user info
+            const navName = document.getElementById('nav-user-name');
+            if (navName) navName.textContent = state.user.name.split(' ').slice(0,2).join(' ');
+            
+            const navAvatar = document.getElementById('nav-user-avatar');
+            if (navAvatar) navAvatar.src = state.user.avatar;
+            
+            // Profile
+            const profName = document.getElementById('profile-name');
+            if (profName) profName.textContent = state.user.name;
+            
+            const profAvatar = document.getElementById('profile-avatar');
+            if (profAvatar) profAvatar.src = state.user.avatar;
+            
+            const profSaldo = document.getElementById('profile-saldo');
+            if (profSaldo) profSaldo.textContent = '$' + state.saldo.toLocaleString('es-AR') + ',50';
+            
+            // Update historial total
+            const totalHist = state.historial.reduce((sum, item) => sum + (item.saved || 0), 0);
+            const histTotalEl = document.getElementById('historial-total');
+            if (histTotalEl) histTotalEl.textContent = '$' + totalHist.toLocaleString('es-AR');
+            
+            // Render preview and full lists
+            renderPreviewOffers();
+            renderOffers();
+            renderHistory();
+        }
+
+        function renderPreviewOffers() {
+            const container = document.getElementById('preview-offers');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            state.offers.slice(0, 4).forEach(offer => {
+                const div = document.createElement('div');
+                div.className = `modern-card cursor-pointer bg-white border border-slate-200 rounded-3xl p-5 hover:border-yellow-300`;
+                div.innerHTML = `
+                    <div class="flex items-start gap-4">
+                        <div class="w-11 h-11 flex-shrink-0 bg-slate-100 rounded-2xl flex items-center justify-center text-3xl">${offer.image}</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-bold text-sm leading-tight">${offer.product}</div>
+                            <div class="text-xs text-slate-500 mt-0.5">${offer.store}</div>
+                            <div class="mt-2 flex items-center justify-between">
+                                <div>
+                                    <span class="font-extrabold text-xl">$${offer.price}</span>
+                                    <span class="price-old text-xs ml-1">$${offer.originalPrice}</span>
+                                </div>
+                                <div class="text-xs font-extrabold px-2 py-px bg-emerald-100 text-emerald-700 rounded-full">-${offer.discount}%</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                div.onclick = () => showOfferDetail(offer.id);
+                container.appendChild(div);
+            });
+        }
+
+        function renderOffers() {
+            const container = document.getElementById('offers-list');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            state.offers.forEach((offer, index) => {
+                const isSelected = state.selectedOffers.includes(index);
+                
+                const div = document.createElement('div');
+                div.className = `offer-card modern-card border ${isSelected ? 'border-yellow-400 ring-2 ring-yellow-200 bg-yellow-50/30' : 'border-slate-200'} bg-white rounded-3xl p-5 flex flex-col cursor-pointer`;
+                
+                div.innerHTML = `
+                    <div class="flex items-start gap-4 flex-1">
+                        <div class="w-14 h-14 flex-shrink-0 bg-slate-100 rounded-2xl flex items-center justify-center text-4xl shadow-inner">${offer.image}</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-start gap-2">
+                                <div>
+                                    <div class="font-extrabold text-lg leading-tight">${offer.product}</div>
+                                    <div class="text-xs font-medium text-slate-500 mt-0.5">${offer.store} • ${offer.category}</div>
+                                </div>
+                                <div class="text-right flex-shrink-0">
+                                    <div class="inline-flex items-center px-2.5 py-px rounded-full text-xs font-extrabold bg-emerald-100 text-emerald-700">-${offer.discount}%</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-3 flex items-baseline gap-x-2">
+                                <span class="font-extrabold text-3xl tracking-tighter">$${offer.price}</span>
+                                <span class="price-old text-base">$${offer.originalPrice}</span>
+                            </div>
+                            <div class="text-emerald-600 font-bold text-xs">Ahorrás $${offer.savings}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-2 mt-5 pt-4 border-t">
+                        <button onclick="event.stopImmediatePropagation(); toggleOfferSelection(${index}, this)" 
+                                class="flex-1 text-xs font-extrabold py-2.5 rounded-2xl transition-all ${isSelected ? 'bg-yellow-400 text-black' : 'bg-slate-900 hover:bg-black text-white'}">
+                            ${isSelected ? '✓ Seleccionado' : 'Seleccionar'}
+                        </button>
+                        <button onclick="event.stopImmediatePropagation(); showOfferDetail(${offer.id})" 
+                                class="px-5 text-xs font-bold py-2.5 rounded-2xl border border-slate-300 hover:bg-slate-50 transition-colors">
+                            Detalle
+                        </button>
+                    </div>
+                `;
+                
+                div.onclick = () => showOfferDetail(offer.id);
+                container.appendChild(div);
+            });
+            
+            updateReviewButton();
+        }
+
+        function toggleOfferSelection(index, element) {
+            const idx = state.selectedOffers.indexOf(index);
+            
+            if (idx === -1) {
+                state.selectedOffers.push(index);
+            } else {
+                state.selectedOffers.splice(idx, 1);
+            }
+            
+            saveState();
+            renderOffers();
+        }
+
+        function selectAllOffers() {
+            state.selectedOffers = state.offers.map((_, i) => i);
+            saveState();
+            renderOffers();
+        }
+
+        function updateReviewButton() {
+            const btn = document.getElementById('review-btn');
+            const countEl = document.getElementById('selected-count');
+            if (!btn || !countEl) return;
+            
+            const count = state.selectedOffers.length;
+            if (count > 0) {
+                btn.style.display = 'flex';
+                countEl.textContent = count;
+            } else {
+                btn.style.display = 'none';
+            }
+        }
+
+        function showOfferDetail(id) {
+            const offer = state.offers.find(o => o.id === id);
+            if (!offer) return;
+            
+            const modal = document.getElementById('detalle-modal');
+            const content = document.getElementById('detalle-content');
+            const addBtn = document.getElementById('detalle-add-btn');
+            
+            const isSelected = state.selectedOffers.includes(offer.id);
+            
+            content.innerHTML = `
+                <div class="flex gap-5">
+                    <div class="w-20 h-20 flex-shrink-0 bg-slate-100 rounded-3xl flex items-center justify-center text-6xl shadow-inner">${offer.image}</div>
+                    <div class="flex-1">
+                        <div class="font-extrabold text-2xl">${offer.product}</div>
+                        <div class="text-emerald-600 font-medium">${offer.store} • ${offer.category}</div>
+                        
+                        <div class="mt-3 flex items-baseline gap-x-3">
+                            <span class="text-5xl font-extrabold tracking-tighter">$${offer.price}</span>
+                            <span class="price-old text-2xl">$${offer.originalPrice}</span>
+                        </div>
+                        
+                        <div class="mt-1 inline-flex px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full text-sm font-extrabold">-${offer.discount}% OFF • Ahorrás $${offer.savings}</div>
+                    </div>
+                </div>
+                
+                <div class="mt-5">
+                    <div class="text-sm font-semibold text-slate-600 mb-1">Descripción</div>
+                    <p class="text-sm leading-relaxed text-slate-700">${offer.description}</p>
+                </div>
+            `;
+            
+            addBtn.onclick = () => {
+                if (!isSelected) {
+                    state.selectedOffers.push(offer.id);
+                    saveState();
+                }
+                hideDetalleModal();
+                showView('ofertas');
+                renderOffers();
+            };
+            
+            addBtn.textContent = isSelected ? 'Ya está en tu propuesta' : 'Añadir a mi propuesta';
+            addBtn.disabled = isSelected;
+            
+            modal.style.display = 'flex';
+        }
+
+        function hideDetalleModal() {
+            document.getElementById('detalle-modal').style.display = 'none';
+        }
+
+        function reviewSelectedOffers() {
+            const modal = document.getElementById('approval-modal');
+            const listContainer = document.getElementById('modal-offers-list');
+            
+            listContainer.innerHTML = '';
+            
+            let total = 0;
+            let totalSavings = 0;
+            
+            state.selectedOffers.forEach(idx => {
+                const offer = state.offers[idx];
+                total += offer.price;
+                totalSavings += offer.savings;
+                
+                const div = document.createElement('div');
+                div.className = `flex gap-4 bg-white border border-slate-100 p-3.5 rounded-2xl`;
+                div.innerHTML = `
+                    <div class="text-3xl w-9 flex-shrink-0">${offer.image}</div>
+                    <div class="flex-1 text-sm">
+                        <div class="font-extrabold">${offer.product}</div>
+                        <div class="text-emerald-600 text-xs">${offer.store}</div>
+                        <div class="flex justify-between items-center mt-2">
+                            <div><span class="font-mono text-xl font-extrabold">$${offer.price}</span> <span class="price-old text-xs">$${offer.originalPrice}</span></div>
+                            <div class="font-extrabold text-xs text-emerald-600">-${offer.discount}%</div>
+                        </div>
+                    </div>
+                `;
+                listContainer.appendChild(div);
+            });
+            
+            document.getElementById('modal-total').innerHTML = `$${total}`;
+            document.getElementById('modal-savings').innerHTML = `$${totalSavings}`;
+            
+            modal.style.display = 'flex';
+        }
+
+        function hideApprovalModal() {
+            document.getElementById('approval-modal').style.display = 'none';
+        }
+
+        function confirmPurchase() {
+            hideApprovalModal();
+            
+            let totalSavings = 0;
+            let totalPaid = 0;
+            
+            state.selectedOffers.forEach(idx => {
+                const offer = state.offers[idx];
+                totalSavings += offer.savings;
+                totalPaid += offer.price;
+            });
+            
+            // Update state (simulates backend)
+            state.saldo = Math.max(0, Math.round((state.saldo - totalPaid) * 100) / 100);
+            state.presupuestoRestante = Math.max(0, state.presupuestoRestante - totalPaid);
+            state.ahorroMes += totalSavings;
+            
+            // Add to history
+            const newItem = {
+                id: Date.now(),
+                date: "Hoy",
+                store: state.selectedOffers.length > 1 ? "Múltiples tiendas" : state.offers[state.selectedOffers[0]].store,
+                product: state.selectedOffers.length > 1 ? `${state.selectedOffers.length} productos` : state.offers[state.selectedOffers[0]].product,
+                saved: totalSavings,
+                total: totalPaid
+            };
+            state.historial.unshift(newItem);
+            
+            state.selectedOffers = [];
+            
+            saveState();
+            updateAllUI();
+            
+            // Show success
+            document.getElementById('success-savings').innerHTML = `$${totalSavings}`;
+            document.getElementById('success-modal').style.display = 'flex';
+            
+            launchConfetti();
+        }
+
+        function hideSuccessModal() {
+            document.getElementById('success-modal').style.display = 'none';
+            showView('dashboard');
+            renderOffers();
+        }
+
+        function launchConfetti() {
+            const colors = ['#FACC15', '#22C55E'];
+            for (let i = 0; i < 70; i++) {
+                const p = document.createElement('div');
+                p.style.cssText = `position:fixed;z-index:99999;width:9px;height:9px;left:${Math.random()*window.innerWidth}px;top:-30px;background:${colors[i%2]};border-radius:${Math.random()>0.6?'50%':'3px'};pointer-events:none`;
+                document.body.appendChild(p);
+                
+                p.animate([
+                    {transform: 'translateY(0) rotate(0deg)', opacity: 1},
+                    {transform: `translateY(${window.innerHeight+120}px) rotate(${Math.random()*400}deg)`, opacity: 0}
+                ], {duration: 1600 + Math.random()*900, easing: 'cubic-bezier(0.25,0.1,0.25,1)'}).onfinish = () => p.remove();
+            }
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-list');
+            if (!container) return;
+            container.innerHTML = '';
+            
+            state.historial.forEach(item => {
+                const div = document.createElement('div');
+                div.className = `modern-card bg-white border border-slate-100 p-5 rounded-3xl flex gap-4 items-center`;
+                div.innerHTML = `
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center">
+                            <i class="fas fa-receipt text-emerald-600 text-2xl"></i>
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-center">
+                            <div class="font-extrabold">${item.product}</div>
+                            <div class="font-mono font-extrabold text-emerald-600 text-lg">+$${item.saved}</div>
+                        </div>
+                        <div class="text-xs text-slate-500 flex justify-between mt-1">
+                            <span>${item.store} • ${item.date}</span>
+                            <span class="font-mono">Total $${item.total}</span>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Chat
+        let chatInitialized = false;
+        
+        function initChat() {
+            if (chatInitialized) return;
+            chatInitialized = true;
+            
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.innerHTML = `
+                <div class="flex gap-3">
+                    <div class="w-8 h-8 mt-1 flex-shrink-0 rounded-2xl banana-gradient flex items-center justify-center text-xl shadow-sm">🍌</div>
+                    <div class="bg-white px-4 py-3 rounded-3xl rounded-tl-none shadow-sm border border-slate-100 max-w-[82%]">
+                        ¡Hola ${state.user.name.split(' ')[0]}! Soy tu agente Platan. Hoy ya te ahorré $${state.ahorroMes} con las propuestas que te preparé. ¿Qué necesitás hoy?
+                    </div>
+                </div>
+            `;
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const chatBox = document.getElementById('chat-messages');
+            const val = input.value.trim();
+            if (!val) return;
+            
+            const userDiv = document.createElement('div');
+            userDiv.className = `flex justify-end gap-3`;
+            userDiv.innerHTML = `
+                <div class="bg-yellow-400 px-4 py-3 rounded-3xl rounded-br-none shadow-sm max-w-[78%] font-medium">
+                    ${val}
+                </div>
+            `;
+            chatBox.appendChild(userDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            input.value = '';
+            
+            setTimeout(() => {
+                let reply = "Entendido. Voy a buscar las mejores opciones para eso ahora mismo...";
+                const lower = val.toLowerCase();
+                
+                if (lower.includes('café') || lower.includes('cafe')) {
+                    reply = "¡Perfecto! Encontré cafés premium con hasta 48% off en Coffee del Día y Mercado Libre. ¿Querés que te los muestre?";
+                } else if (lower.includes('oferta') || lower.includes('ahorro')) {
+                    reply = `Actualicé tus propuestas. Tenés ${state.offers.length} ofertas con ahorro total de $${state.offers.reduce((s, o) => s + o.savings, 0)}.`;
+                } else if (lower.includes('saldo') || lower.includes('dinero')) {
+                    reply = `Tu saldo actual es de $${state.saldo.toFixed(2)}. ¿Querés recargarlo o ver tus movimientos recientes?`;
+                }
+                
+                const agentDiv = document.createElement('div');
+                agentDiv.className = `flex gap-3`;
+                agentDiv.innerHTML = `
+                    <div class="w-8 h-8 mt-1 flex-shrink-0 rounded-2xl banana-gradient flex items-center justify-center text-xl shadow-sm">🍌</div>
+                    <div class="bg-white px-4 py-3 rounded-3xl rounded-tl-none shadow-sm border border-slate-100 max-w-[82%]">
+                        ${reply}
+                    </div>
+                `;
+                chatBox.appendChild(agentDiv);
+                chatBox.scrollTop = chatBox.scrollHeight;
+            }, 900);
+        }
+
+        // View management
+        function showView(viewName) {
+            // Hide all views
+            document.querySelectorAll('.section-view').forEach(v => v.classList.remove('active'));
+            
+            // Show target
+            const target = document.getElementById('view-' + viewName);
+            if (target) target.classList.add('active');
+            
+            // Update nav active state
+            document.querySelectorAll('[id^="nav-"]').forEach(nav => nav.classList.remove('active', 'text-yellow-600'));
+            
+            const activeNav = document.getElementById('nav-' + viewName);
+            if (activeNav) {
+                activeNav.classList.add('active', 'text-yellow-600');
+            }
+            
+            // Special inits
+            if (viewName === 'chat') {
+                initChat();
+            }
+            
+            if (viewName === 'ofertas') {
+                renderOffers();
+            }
+            
+            if (viewName === 'historial') {
+                renderHistory();
+            }
+            
+            if (viewName === 'dashboard') {
+                updateAllUI();
+            }
+        }
+
+        // Login
+        function login() {
+            const email = document.getElementById('login-email').value.trim();
+            const pass = document.getElementById('login-pass').value.trim();
+            
+            if (email && pass.length >= 4) {
+                if (email.includes('ana')) {
+                    state.user.name = "Ana Belén Méndez";
+                    state.user.email = email;
+                } else {
+                    state.user.name = email.split('@')[0].replace(/[\.\_\-]/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                    state.user.email = email;
+                }
+                
+                saveState();
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('app-view').classList.remove('hidden');
+                
+                updateAllUI();
+                showView('dashboard');
+                initChat();
+            } else {
+                alert('Por favor ingresá un email y una contraseña válida (demo)');
+            }
+        }
+
+        function quickDemoLogin() {
+            state.user.name = "Ana Belén Méndez";
+            state.user.email = "ana.mendez@email.com";
+            saveState();
+            
+            document.getElementById('login-view').classList.add('hidden');
+            document.getElementById('app-view').classList.remove('hidden');
+            
+            updateAllUI();
+            showView('dashboard');
+            initChat();
+        }
+
+        function simulateLogout() {
+            if (confirm('¿Cerrar sesión en PlatanPay WebApp?')) {
+                localStorage.removeItem('platanpay_webapp_state');
+                location.reload();
+            }
+        }
+
+        // Initialize everything
+        function initializeApp() {
+            initTailwind();
+            loadState();
+            
+            // Show login first time
+            const hasState = localStorage.getItem('platanpay_webapp_state');
+            
+            if (!hasState) {
+                document.getElementById('login-view').classList.remove('hidden');
+                document.getElementById('app-view').classList.add('hidden');
+            } else {
+                document.getElementById('login-view').classList.add('hidden');
+                document.getElementById('app-view').classList.remove('hidden');
+                updateAllUI();
+                showView('dashboard');
+                initChat();
+            }
+            
+            // Keyboard shortcut
+            document.addEventListener('keydown', function(e) {
+                if (e.key === "?" && document.activeElement.tagName === "BODY") {
+                    e.preventDefault();
+                    const chatView = document.getElementById('view-chat');
+                    if (chatView.classList.contains('active')) {
+                        document.getElementById('chat-input').focus();
+                    } else {
+                        showView('chat');
+                    }
+                }
+                if (e.key.toLowerCase() === 'o' && document.activeElement.tagName === "BODY") {
+                    e.preventDefault();
+                    showView('ofertas');
+                }
+            });
+            
+            // Easter egg on logo
+            const logo = document.querySelector('.logo-font');
+            if (logo) {
+                logo.onclick = () => {
+                    const m = document.createElement('div');
+                    m.style.cssText = 'position:fixed;font-size:4rem;top:30%;left:50%;transform:translate(-50%,-50%);z-index:999999;';
+                    m.innerHTML = '🍌';
+                    document.body.appendChild(m);
+                    m.animate([
+                        {transform: 'translate(-50%,-50%) scale(0.5)', opacity: 1},
+                        {transform: 'translate(-50%,-180%) scale(1.8)', opacity: 0}
+                    ], {duration: 700, easing: 'ease-out'}).onfinish = () => m.remove();
+                };
+            }
+            
+            console.log('%c[PlatanPay WebApp] Demo inicializada correctamente. Versión web responsive lista. Estado persistido en localStorage.', 'color:#854d0e');
+        }
+
+        window.onload = initializeApp;
+    </script>
+    <script src="/backend-integration.js"></script>`n</body>
+</html>

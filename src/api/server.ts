@@ -1,7 +1,18 @@
 import express from "express";
 import { runAgentTurn, type AgentMessage, type AgentTurnResult } from "../lib/agent.js";
+import { PRODUCTS, searchProducts } from "../mocks/products.js";
+import { scoreProducts } from "../lib/scoring.js";
 
 const app = express();
+app.use((req, res, next) => {
+  const allowedOrigin = process.env.CORS_ORIGIN ?? "*";
+  res.header("Access-Control-Allow-Origin", allowedOrigin);
+  res.header("Vary", "Origin");
+  res.header("Access-Control-Allow-Headers", "Content-Type");
+  res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  if (req.method === "OPTIONS") return res.sendStatus(204);
+  return next();
+});
 app.use(express.json({ limit: "1mb" }));
 app.use((err: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (err instanceof SyntaxError && "body" in err) {
@@ -49,6 +60,8 @@ app.post("/chat", async (req, res) => {
       ok: true,
       reply: result.reply,
       toolCalls: result.toolCalls,
+      proposals: result.proposals ?? [],
+      purchaseReceipts: result.purchaseReceipts ?? [],
       usage: result.usage,
       stopReason: result.stopReason,
     });
@@ -77,13 +90,43 @@ async function runConfiguredAgentTurn(history: AgentMessage[]): Promise<AgentTur
 
   const lastUser = [...history].reverse().find((m) => m.role === "user");
   const lastUserText = typeof lastUser?.content === "string" ? lastUser.content : "";
-  const reply = `Respuesta mock para: ${lastUserText}`;
+  const proposals = scoreProducts(searchProducts(inferMockProductQuery(lastUserText))).slice(0, 5);
+  const approved = /\b(si|sí|dale|aprobado|confirmo|ok)\b/i.test(lastUserText);
+  const purchaseReceipts =
+    approved && proposals[0]
+      ? [
+          {
+            ok: true,
+            mock: true as const,
+            productId: proposals[0].id,
+            storeId: proposals[0].storeId,
+            storeName: proposals[0].storeName,
+            total: proposals[0].price,
+            estimatedDeliveryDays: 2,
+            receiptId: `MOCK-${Date.now().toString(36).toUpperCase()}`,
+            message: `Compra SIMULADA. No se cobró nada real. Total: $${proposals[0].price.toLocaleString("es-AR")}.`,
+          },
+        ]
+      : [];
+  const reply =
+    proposals.length > 0
+      ? `Encontré ${proposals.length} opciones para "${inferMockProductQuery(lastUserText)}". Revisalas abajo y aprobá una si querés que simule la compra.`
+      : `Respuesta mock para: ${lastUserText}`;
   history.push({ role: "assistant", content: reply });
 
   return {
     reply,
     toolCalls: [],
+    proposals,
+    purchaseReceipts,
     stopReason: "end_turn",
     usage: { input: 0, output: 0, cacheRead: 0, cacheCreate: 0 },
   };
+}
+
+function inferMockProductQuery(text: string): string {
+  const normalized = text.toLowerCase();
+  const tags = new Set(PRODUCTS.flatMap((product) => product.tags));
+  const matched = [...tags].find((tag) => normalized.includes(tag));
+  return matched ?? normalized.split(/\s+/).find((part) => part.length > 3) ?? normalized;
 }
