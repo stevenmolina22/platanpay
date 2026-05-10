@@ -20,6 +20,8 @@ const ExtractedProductSchema = z.object({
   })).describe("Lista de productos encontrados en la página de shopping")
 });
 
+type ExtractedProductData = z.infer<typeof ExtractedProductSchema>;
+
 function inferCategory(name: string): Category {
   const haystack = name.toLowerCase();
   if (/gaseosa|agua|jugo|cerveza|vino|bebida|coca|sprite|fanta|gatorade/.test(haystack)) return "bebidas";
@@ -56,13 +58,13 @@ export async function searchGoogleShoppingWithFirecrawl(query: string): Promise<
     });
 
     console.log("Raw Firecrawl API:", JSON.stringify(extractResult, null, 2));
-    const data = extractResult.data as any;
+    const data = extractResult.data as ExtractedProductData | undefined;
     if (!extractResult.success || !data?.products) {
       console.error(`Firecrawl no pudo extraer resultados para ${query}:`, extractResult.error);
       return [];
     }
 
-    return data.products.map((p: any, i: number) => {
+    return data.products.map((p, i) => {
       const price = Math.round(p.price);
       const listPrice = p.listPrice ? Math.max(Math.round(p.listPrice), price) : price;
       const discountPct = listPrice > price ? Math.round(((listPrice - price) / listPrice) * 100) : 0;
